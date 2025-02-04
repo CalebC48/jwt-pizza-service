@@ -1,18 +1,31 @@
 const request = require("supertest");
 const app = require("../../service");
+const { Role } = require("../../model/model.js");
+const { DB } = require("../../database/database.js");
 
-const testUser = { name: "pizza diner", email: "reg@test.com", password: "a" };
+let testUser;
 let testUserAuthToken;
 
 if (process.env.VSCODE_INSPECTOR_OPTIONS) {
   jest.setTimout(500000);
 }
 
+async function createAdminUser() {
+  let user = { password: "toomanysecrets", roles: [{ role: Role.Admin }] };
+  user.name = "PizzaDiner-" + Math.random().toString(36).substring(2, 12);
+  user.email = user.name + "@admin.com";
+
+  await DB.addUser(user);
+  user.password = "toomanysecrets";
+
+  return user;
+}
+
 beforeAll(async () => {
-  testUser.email = Math.random().toString(36).substring(2, 12) + "@test.com";
-  const registerRes = await request(app).post("/api/auth").send(testUser);
+  testUser = await createAdminUser();
+  const loginRes = await request(app).put("/api/auth").send(testUser);
   //   console.log("beforeAll registerRes: " + JSON.stringify(registerRes.body));
-  testUserAuthToken = registerRes.body.token;
+  testUserAuthToken = loginRes.body.token;
   //   console.log("beforeAll testUserAuthToken: " + testUserAuthToken);
 });
 
@@ -23,15 +36,34 @@ test("Get pizza menu", async () => {
 });
 
 test("Create order", async () => {
-  await request(app)
-    .post("/api/order/menu")
+  const createMenuItemReq = await request(app)
+    .put("/api/order/menu")
     .set("Authorization", `Bearer ${testUserAuthToken}`)
-    .send({ description: "Veggie", price: 0.0038 });
+    .send({
+      title: "TestItem",
+      description: "Test item description",
+      price: 0.0038,
+      image: "noimg.png",
+    });
+
+  console.log("createMenuItemReq: " + JSON.stringify(createMenuItemReq.body));
+
+  const createdMenuItems = createMenuItemReq.body;
+  const newMenuItem = createdMenuItems[createdMenuItems.length - 1];
+  const newMenuItemId = newMenuItem.id;
+
+  console.log("New Menu Item ID: " + newMenuItemId);
 
   const orderReq = {
     franchiseId: 1,
     storeId: "1",
-    items: [{ menuId: 1, description: "Veggie", price: 0.0038 }],
+    items: [
+      {
+        menuId: newMenuItemId,
+        description: "Test item description",
+        price: 0.0038,
+      },
+    ],
   };
   console.log("create order testUserAuthToken: " + testUserAuthToken);
   const orderRes = await request(app)
