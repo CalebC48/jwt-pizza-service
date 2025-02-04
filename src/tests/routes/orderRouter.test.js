@@ -12,6 +12,7 @@ beforeAll(async () => {
   testUser.email = Math.random().toString(36).substring(2, 12) + "@test.com";
   const registerRes = await request(app).post("/api/auth").send(testUser);
   testUserAuthToken = registerRes.body.token;
+  console.log("beforeAll testUserAuthToken: " + testUserAuthToken);
 });
 
 test("Get pizza menu", async () => {
@@ -29,6 +30,7 @@ test("Create order", async () => {
       { menuId: 2, description: "Pepperoni", price: 0.0042 },
     ],
   };
+  console.log("create order testUserAuthToken: " + testUserAuthToken);
   const orderRes = await request(app)
     .post("/api/order")
     .set("Authorization", `Bearer ${testUserAuthToken}`)
