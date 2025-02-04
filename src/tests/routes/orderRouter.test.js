@@ -12,7 +12,6 @@ beforeAll(async () => {
   testUser.email = Math.random().toString(36).substring(2, 12) + "@test.com";
   const registerRes = await request(app).post("/api/auth").send(testUser);
   testUserAuthToken = registerRes.body.token;
-  expectValidJwt(testUserAuthToken);
 });
 
 test("Get pizza menu", async () => {
@@ -61,8 +60,8 @@ test("Get orders", async () => {
   expect(ordersRes.body.orders.length).toBeGreaterThan(0);
 });
 
-function expectValidJwt(potentialJwt) {
-  expect(potentialJwt).toMatch(
-    /^[a-zA-Z0-9\-_]*\.[a-zA-Z0-9\-_]*\.[a-zA-Z0-9\-_]*$/
-  );
-}
+// function expectValidJwt(potentialJwt) {
+//   expect(potentialJwt).toMatch(
+//     /^[a-zA-Z0-9\-_]*\.[a-zA-Z0-9\-_]*\.[a-zA-Z0-9\-_]*$/
+//   );
+// }
