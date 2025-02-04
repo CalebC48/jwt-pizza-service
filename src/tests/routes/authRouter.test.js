@@ -1,5 +1,6 @@
 const request = require("supertest");
-const app = require("../service");
+const app = require("../../service");
+const { authRouter, setAuthUser } = require("../../routes/authRouter.js");
 
 const testUser = { name: "pizza diner", email: "reg@test.com", password: "a" };
 let testUserAuthToken;
@@ -41,6 +42,33 @@ test("login", async () => {
 });
 
 //Multi login test?
+
+test("setAuthUser()", async () => {
+  req = { headers: { authorization: `Bearer ${testUserAuthToken}` } };
+  res = {};
+  next = jest.fn();
+  await setAuthUser(req, res, next);
+
+  expect(req.user.email).toBe(testUser.email);
+  expect(next).toHaveBeenCalled();
+});
+
+test("setAuthUser() with bad token", async () => {
+  req = { headers: { authorization: `Bearer ${testUserAuthToken}bad` } };
+  res = {};
+  next = jest.fn();
+  await setAuthUser(req, res, next);
+
+  expect(req.user).toBeUndefined();
+  expect(next).toHaveBeenCalled();
+});
+
+test("logout", async () => {
+  const logoutRes = await request(app)
+    .delete("/api/auth")
+    .set("Authorization", `Bearer ${testUserAuthToken}`);
+  expect(logoutRes.status).toBe(200);
+});
 
 function expectValidJwt(potentialJwt) {
   expect(potentialJwt).toMatch(
