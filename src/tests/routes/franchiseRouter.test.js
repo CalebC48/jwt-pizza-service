@@ -26,7 +26,6 @@ async function createAdminUser() {
 beforeAll(async () => {
   testUser = await createAdminUser();
   const loginRes = await request(app).put("/api/auth").send(testUser);
-  console.log(loginRes.body);
   testUserAuthToken = loginRes.body.token;
   testUserId = loginRes.body.user.id;
   //   expectValidJwt(testUserAuthToken);
