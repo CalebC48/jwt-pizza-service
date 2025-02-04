@@ -23,13 +23,15 @@ test("Get pizza menu", async () => {
 });
 
 test("Create order", async () => {
+  await request(app)
+    .post("/api/order/menu")
+    .set("Authorization", `Bearer ${testUserAuthToken}`)
+    .send({ description: "Veggie", price: 0.0038 });
+
   const orderReq = {
     franchiseId: 1,
     storeId: "1",
-    items: [
-      { menuId: 1, description: "Veggie", price: 0.0038 },
-      { menuId: 2, description: "Pepperoni", price: 0.0042 },
-    ],
+    items: [{ menuId: 1, description: "Veggie", price: 0.0038 }],
   };
   console.log("create order testUserAuthToken: " + testUserAuthToken);
   const orderRes = await request(app)
