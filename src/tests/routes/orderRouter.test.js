@@ -11,6 +11,7 @@ if (process.env.VSCODE_INSPECTOR_OPTIONS) {
 beforeAll(async () => {
   testUser.email = Math.random().toString(36).substring(2, 12) + "@test.com";
   const registerRes = await request(app).post("/api/auth").send(testUser);
+  console.log("beforeAll registerRes: " + JSON.stringify(registerRes.body));
   testUserAuthToken = registerRes.body.token;
   console.log("beforeAll testUserAuthToken: " + testUserAuthToken);
 });
