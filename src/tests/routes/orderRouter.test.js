@@ -11,9 +11,9 @@ if (process.env.VSCODE_INSPECTOR_OPTIONS) {
 beforeAll(async () => {
   testUser.email = Math.random().toString(36).substring(2, 12) + "@test.com";
   const registerRes = await request(app).post("/api/auth").send(testUser);
-  console.log("beforeAll registerRes: " + JSON.stringify(registerRes.body));
+  //   console.log("beforeAll registerRes: " + JSON.stringify(registerRes.body));
   testUserAuthToken = registerRes.body.token;
-  console.log("beforeAll testUserAuthToken: " + testUserAuthToken);
+  //   console.log("beforeAll testUserAuthToken: " + testUserAuthToken);
 });
 
 test("Get pizza menu", async () => {
@@ -36,6 +36,7 @@ test("Create order", async () => {
     .post("/api/order")
     .set("Authorization", `Bearer ${testUserAuthToken}`)
     .send(orderReq);
+  console.log(orderRes.body);
   expect(orderRes.status).toBe(200);
   expect(orderRes.body.order).not.toBeNull();
   expect(orderRes.body.order.reportSlowPizzaToFactoryUrl).not.toBeNull();
