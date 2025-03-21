@@ -1,5 +1,6 @@
 const config = require("./config");
 const os = require("os");
+const fetch = require("node-fetch");
 
 class MetricBuilder {
   constructor() {
@@ -77,7 +78,6 @@ function systemMetrics(builder) {
 }
 
 const requests = {};
-let latency = 0;
 
 const httpRequests = {
   total: 0,
