@@ -2,6 +2,7 @@ const express = require("express");
 const { DB, Role } = require("../database/database.js");
 const { authRouter } = require("./authRouter.js");
 const { StatusCodeError, asyncHandler } = require("../endpointHelper.js");
+const metrics = require("../metrics.js");
 
 const franchiseRouter = express.Router();
 
@@ -108,7 +109,10 @@ franchiseRouter.post(
     }
 
     const franchise = req.body;
-    res.send(await DB.createFranchise(franchise));
+    const result = await DB.createFranchise(franchise);
+
+    metrics.trackFranchiseCreation();
+    res.send(result);
   })
 );
 
@@ -141,7 +145,9 @@ franchiseRouter.post(
       throw new StatusCodeError("unable to create a store", 403);
     }
 
-    res.send(await DB.createStore(franchise.id, req.body));
+    const result = await DB.createStore(franchise.id, req.body);
+    metrics.trackStoreCreation(franchise.id);
+    res.send(result);
   })
 );
 
