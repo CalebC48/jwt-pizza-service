@@ -103,7 +103,7 @@ function track(endpoint) {
 
     res.on("finish", () => {
       const duration = Date.now() - startTime;
-      latencies[endpoint] = duration;
+      latencies.endpoints[endpoint] = duration;
     });
 
     next();
