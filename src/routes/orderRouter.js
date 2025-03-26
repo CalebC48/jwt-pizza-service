@@ -120,6 +120,10 @@ orderRouter.post(
 
     try {
       const order = await DB.addDinerOrder(req.user, orderReq);
+      const orderInfo = {
+        diner: { id: req.user.id, name: req.user.name, email: req.user.email },
+        order,
+      };
 
       const totalPrice = order.items.reduce((sum, item) => sum + item.price, 0);
       const pizzaCount = order.items.length;
@@ -152,6 +156,7 @@ orderRouter.post(
           reportSlowPizzaToFactoryUrl: j.reportUrl,
           jwt: j.jwt,
         });
+        logger.factoryLogger(orderInfo);
       } else {
         metrics.trackPizzaCreationFailure();
         res.status(500).send({
