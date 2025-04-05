@@ -111,12 +111,12 @@ orderRouter.get(
   })
 );
 
-orderRouter.post("/", (req, res, next) => {
-  if (enableChaos && Math.random() < 0.5) {
-    throw new StatusCodeError("Chaos monkey", 500);
-  }
-  next();
-});
+// orderRouter.post("/", (req, res, next) => {
+//   if (enableChaos && Math.random() < 0.5) {
+//     throw new StatusCodeError("Chaos monkey", 500);
+//   }
+//   next();
+// });
 
 // createOrder
 orderRouter.post(
@@ -127,6 +127,9 @@ orderRouter.post(
     const orderReq = req.body;
 
     try {
+      if (enableChaos && Math.random() < 0.5) {
+        throw new StatusCodeError("Chaos monkey", 500);
+      }
       const order = await DB.addDinerOrder(req.user, orderReq);
       const orderInfo = {
         diner: { id: req.user.id, name: req.user.name, email: req.user.email },
