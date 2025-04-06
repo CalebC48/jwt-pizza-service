@@ -9,6 +9,8 @@ const logger = require("../logger.js");
 
 const orderRouter = express.Router();
 
+let enableChaos = false;
+
 orderRouter.endpoints = [
   {
     method: "GET",
@@ -127,9 +129,9 @@ orderRouter.post(
     const orderReq = req.body;
 
     try {
-      if (enableChaos && Math.random() < 0.5) {
-        throw new StatusCodeError("Chaos monkey", 500);
-      }
+      // if (enableChaos && Math.random() < 0.5) {
+      //   throw new StatusCodeError("Chaos monkey", 500);
+      // }
       const order = await DB.addDinerOrder(req.user, orderReq);
       const orderInfo = {
         diner: { id: req.user.id, name: req.user.name, email: req.user.email },
@@ -183,7 +185,6 @@ orderRouter.post(
 );
 
 //Chaos monkey
-let enableChaos = false;
 orderRouter.put(
   "/chaos/:state",
   authRouter.authenticateToken,
