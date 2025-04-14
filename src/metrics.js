@@ -288,7 +288,7 @@ function sendMetricToGrafana(metrics) {
       console.error("Error sending metrics:", error.message);
     });
 }
-function sendMetricsPeriodically(period = 60000) {
+function sendMetricsPeriodically(period = 120000) {
   console.log(`Starting metrics collection every ${period / 1000} seconds`);
 
   const timer = setInterval(() => {

@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(metrics.track("all"));
 app.use(logger.httpLogger);
 
-metrics.sendMetricsPeriodically(60000);
+metrics.sendMetricsPeriodically(120000);
 
 app.use(setAuthUser);
 app.use((req, res, next) => {
