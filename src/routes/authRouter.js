@@ -103,7 +103,7 @@ authRouter.post(
       roles: [{ role: Role.Diner }],
     });
     const auth = await setAuth(user);
-    metrics.trackUserRegistration();
+    // metrics.trackUserRegistration();
     res.json({ user: user, token: auth });
   })
 );
